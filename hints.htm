@@ -1,0 +1,127 @@
+<html>
+<body>
+<h2>Hints for Exercise 8.1</h2>
+
+<h3>InventoryClient.java</h3>
+
+<pre><font color="grey">
+    public InventoryClient() {
+        // TODO: Set the instance field 'client' </font><font color="blue">
+        client = ClientBuilder.newClient(); </font><font color="grey">
+        ...
+</font></pre>
+
+<pre><font color="grey">
+    public ItemList getItems() {
+        // TODO: Invoke the "GET" operation on BASE_URL + "/all"
+        //       Tell JAX-RS to unmarshall the response to an ItemList </font><font color="blue">
+        ItemList itemList = client.target(BASE_URL)
+                                  .path("/all")
+                                  .request(MediaType.APPLICATION_XML)
+                                  .get(ItemList.class); </font><font color="grey">
+        
+        // TODO: print the size of the ItemList to the console </font><font color="blue">
+        System.out.println("Got " + itemList.getItems().size() + 
+                " items in response to GET request"); </font><font color="grey">
+
+        // TODO: Return the ItemList </font><font color="blue">
+        return itemList; </font><font color="grey">
+    }
+
+    ...
+
+    public int deleteItem(int productId) {
+        int status;
+        
+        // TODO: Invoke the DELETE operation on BASE_URL + "/" + productId
+        // HINT: To add the productId to the URL, use the path() and resolveTemplate() 
+        //       methods instead of String concatenation </font><font color="blue">
+        Response response = client.target(BASE_URL)
+                                  .path("/{productId}")
+                                  .resolveTemplate("productId", productId)
+                                  .request()
+                                  .delete(); </font><font color="grey">
+        
+        // TODO: Get the HTTP status from the response </font><font color="blue">
+        status = response.getStatus(); </font><font color="grey">
+        
+        // TODO: print the response status to the console </font><font color="blue">
+        System.out.println("Got response status " + status
+                + " from DELETE request product " + productId); </font><font color="grey">
+
+        return status;
+    }
+    
+    ...
+
+    public int insertItem(Item item) {
+        int status;
+
+        // TODO: Create an XML Entity from the Item </font><font color="blue">
+        Entity&lt;Item&gt; itemEntity = Entity.xml(item); </font><font color="grey">
+
+        // TODO: Invoke the POST operation on BASE_URL, posting the Item's Entity as XML </font><font color="blue">
+        Response response = client.target(BASE_URL)
+                                  .request()
+                                  .post(itemEntity); </font><font color="grey">
+
+        // TODO: Get the HTTP status from the response </font><font color="blue">
+        status = response.getStatus(); </font><font color="grey">
+        
+        // TODO: print the response status to the console </font><font color="blue">
+        System.out.println("Got response status " + status
+                + " from POST request product " + item.getProductId()); </font><font color="grey">
+
+        return status;
+    }
+
+    ...
+
+    public int updateQuantity(int productId, int qty){
+        int status;
+        ...
+        
+        // TODO: Create an XML Entity from the new Item </font><font color="blue">
+        Entity&lt;Item&gt; itemEntity = Entity.xml(item); </font><font color="grey">
+        
+        // TODO: Invoke the PUT operation on BASE_URL + "/" + productId, 
+        //       marshalling the Item's Entity as XML </font><font color="blue">
+        Response response = client.target(BASE_URL)
+                                  .path("/{productId}")
+                                  .resolveTemplate("productId", productId)
+                                  .request()
+                                  .put(itemEntity); </font><font color="grey">
+        
+        // TODO: Get the HTTP status from the response </font><font color="blue">
+        status = response.getStatus(); </font><font color="grey">
+
+        // TODO: print the response status to the console </font><font color="blue">
+        System.out.println("Got response status " + status
+                + " from PUT request product " + productId); </font><font color="grey">
+
+        return status;
+    }
+</font></pre>
+
+<h3>BONUS 1 (Process JSON Responses)</h3>
+
+<pre><font color="grey">
+        itemList = client.target(BASE_URL) </font><font color="blue">
+        itemList = client.target(BASE_URL_JSON) </font><font color="grey">
+        ...
+                                .request(MediaType.APPLICATION_XML) </font><font color="blue">
+                                .request(MediaType.APPLICATION_JSON) </font><font color="grey">
+        ...
+        Entity<Item> itemEntity = Entity.xml(item);  </font><font color="blue">
+        Entity<Item> itemEntity = Entity.json(item);  </font><font color="grey">
+</font></pre>
+
+<h3>BONUS 3 (Use JavaBeans Generated by wadl2java)</h3>
+
+<pre><font color="blue">
+import com.ltree.inventory.generated.Item;
+import com.ltree.inventory.generated.ItemList;
+</font></pre>
+
+</body>
+</html>
